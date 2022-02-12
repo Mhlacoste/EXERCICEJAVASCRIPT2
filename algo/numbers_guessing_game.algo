@@ -1,0 +1,107 @@
+CALL main
+
+SEQUENCE main
+    CALL greetUser
+    CALL readDifficulty RETURNING difficulty
+    CALL setDifficultyLevel WITH difficulty RETURNING trials, maxNumber
+    CALL chooseAnswer WITH maxNumber RETURNING answer
+    CALL displayQuestion WITH maxNumber
+    CALL readUserAnswer WITH trials, answer
+ENDSEQUENCE
+
+SEQUENCE greetUser 
+    DISPLAY "Hello, are you ready to play the guessing game?"
+ENDSEQUENCE
+
+SEQUENCE readDifficulty
+    DISPLAY "Please choose a difficulty (1 = Very easy, 2 = Easy, 3 = Medium, 4 = Hard, 5 = Very Hard): "
+    SET difficulty TO READ user input
+    RETURN difficulty
+ENDSEQUENCE
+
+SEQUENCE setDifficultyLevel USING difficulty
+    CASE difficulty OF 
+        1:
+            SET trials TO 1000000
+            SET maxNumber TO 10
+        2:
+            SET trials TO 5
+            SET maxNumber TO 10
+        3:
+            SET trials TO 5
+            SET maxNumber TO 100
+        4:
+            SET trials TO 8
+            SET maxNumber TO 500
+        5:
+            SET trials TO 9
+            SET maxNumber TO 1000
+    ENDCASE 
+    RETURN trials, maxNumber
+ENDSEQUENCE
+
+SEQUENCE chooseAnswer USING maxNumber
+    RETURN random number between 1 and maxNumber
+ENDSEQUENCE
+
+SEQUENCE displayQuestion USING maxNumber
+    DISPLAY "Guess the number that is between 1 and (maxNumber)"
+ENDSEQUENCE
+
+SEQUENCE readUserAnswer USING trials, answer
+    SET playing TO true
+    WHILE playing
+        SET userAnswer TO READ user input
+
+        CALL checkAnswer WITH userAnswer, answer RETURNING success
+
+        IF success IS EQUAL TO true THEN
+            CALL endGame WITH success, answer
+            SET playing TO false
+        ELSE
+            SET trials TO trials - 1
+            IF trials IS EQUAL TO 0
+                CALL endGame WITH success, answer
+                SET playing TO false
+            ELSE
+                CALL displayError WITH userAnswer, answer
+            ENDIF
+        ENDIF
+    ENDWHILE
+ENDSEQUENCE
+
+SEQUENCE checkAnswer USING userAnswer, answer
+    IF userAnswer IS EQUAL TO answer THEN
+        RETURN true
+    ELSE
+        RETURN false
+    END IF
+ENDSEQUENCE
+
+SEQUENCE displayError USING userAnswer, answer
+    IF userAnswer IS GREATER THAN answer THEN
+        DISPLAY "The number is lower!"
+    ELSE 
+        DISPLAY "The number is bigger!"
+    ENDIF
+ENDSEQUENCE
+
+SEQUENCE endGame USING success, answer
+    IF success IS EQUAL TO true THEN
+        DISPLAY "Congratulations you found the right number!"
+    ELSE
+        DISPLAY "Game over ... The correct answer was (answer)"
+    END IF
+    CALL displayContinue
+ENDSEQUENCE
+
+SEQUENCE displayContinue
+    DISPLAY "Do you want to continue playing? (1 = Yes, 2 = No)"
+    SET continuePlaying TO READ user input
+
+    IF continuePlaying IS EQUAL TO 1 THEN
+        CALL main
+    ELSE 
+        EXIT
+    ENDIF
+ENDSEQUENCE

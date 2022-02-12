@@ -1,0 +1,22 @@
+{
+  "name": "exercicejavascript2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "numbers_guessing_game_nodejs.js",
+  "scripts": {
+    "start": "node ./nodeJs/numbers_guessing_game_nodejs.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mhlacoste/EXERCICEJAVASCRIPT2.git"
+  },
+  "author": "Marie-Helene Lacoste",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mhlacoste/EXERCICEJAVASCRIPT2/issues"
+  },
+  "homepage": "https://github.com/Mhlacoste/EXERCICEJAVASCRIPT2#readme",
+  "dependencies": {
+    "prompt-sync": "^4.2.0"
+  }
+}
